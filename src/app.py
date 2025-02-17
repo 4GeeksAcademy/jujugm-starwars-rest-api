@@ -54,6 +54,59 @@ def get_all_users():
 
     return jsonify(response_body), 200
 
+
+@app.route('/user/<int:id>', methods=['POST'])
+def create_user():
+    try :
+        # si en try sucede algun tipo de error lo colocamos en el except:
+
+        request_body = request.json
+        print(request_body)
+        user = db.session.execute(db.select(User) .filter_by (email=request_body ["email"])). scalar_one()
+
+                # user = db.session.execute(db.select(Table) .filter_by (atributo de busqueda =request_body ["at de busqueda "])). scalar_one()
+
+        return jsonify({"msg": "cannot create, user already exist"}), 400
+
+    except: 
+        user = User(email=request_body["email"], password=request_body["password"], is_active= request_body["is_active"])
+        # crea user
+        db.session.add(user)
+        # agregar user
+        db.session.commit()
+        # commit = grabado en piedra
+    
+
+    return jsonify({"msg": "created"}), 201
+
+
+@app.route('/user/<int:id>', methods=['DELETE'])
+def delete_user():
+    try :
+        # solo quiero hacer una busqueda y mostrarlo
+        
+        user_query_delete = db.session.execute(db.select(User) .filter_by (id=id)).scalar_one()
+        print(User)
+        db.session.delete(User)
+        db.session.commit()
+                # user = db.session.execute(db.select(Table) .filter_by (atributo de busqueda =request_body ["at de busqueda "])). scalar_one()
+
+        return jsonify({"msg": "deleted"}), 200
+    except:
+        return jsonify({"msg":"user exist"}), 404
+
+    # except: 
+    # #     user = User(email=request_body["email"], password=request_body["password"], is_active= request_body["is_active"])
+    # #     # crea user
+    # #     db.session.add(user)
+    # #     # agregar user
+    # #     db.session.commit()
+    # #     # commit = grabado en piedra
+    
+
+    #     return jsonify({"msg": "created"}), 201
+
+
 @app.route('/people', methods=['GET'])
 def get_all_people():
     data = db.session.scalars(db.select(People)).all()
@@ -90,6 +143,56 @@ def get_one_people(id):
     except:
         return jsonify({"msg":"people do not exist"}), 404
     
+
+@app.route('/people/<int:id>', methods=['POST'])
+def create_people():
+    try :
+        # si en try sucede algun tipo de error lo colocamos en el except:
+
+        request_body = request.json
+        print(request_body)
+        people = db.session.execute(db.select(People) .filter_by (name=request_body ["name"])). scalar_one()
+
+                # user = db.session.execute(db.select(Table) .filter_by (atributo de busqueda =request_body ["at de busqueda "])). scalar_one()
+
+        return jsonify({"msg": "cannot create, person already exist"}), 400
+
+    except: 
+        people = People(name=request_body["name"])
+        # crea user
+        db.session.add(people)
+        # agregar user
+        db.session.commit()
+        # commit = grabado en piedra
+    
+
+    return jsonify({"msg": "created"}), 201
+
+@app.route('/planets/<int:id>', methods=['POST'])
+def create_planet():
+    try :
+        # si en try sucede algun tipo de error lo colocamos en el except:
+
+        request_body = request.json
+        print(request_body)
+        planet = db.session.execute(db.select(Planets) .filter_by (name=request_body ["name"])). scalar_one()
+
+                # user = db.session.execute(db.select(Table) .filter_by (atributo de busqueda =request_body ["at de busqueda "])). scalar_one()
+
+        return jsonify({"msg": "cannot create, planet already exist"}), 400
+
+    except: 
+        planet = Planets(name=request_body["name"], climate=request_body["climate"], population=request_body["population"], terrain=request_body["terrain"])
+        # crea user
+        db.session.add(planet)
+        # agregar user
+        db.session.commit()
+        # commit = grabado en piedra
+    
+
+    return jsonify({"msg": "planet created"}), 201
+
+    
 @app.route('/planets/<int:id>', methods=['GET'])
 def get_one_planet(id):
     try:
@@ -99,6 +202,8 @@ def get_one_planet(id):
         return jsonify({"result":planet.serialize()}), 200
     except:
         return jsonify({"msg":"planet do not exist"}), 404
+
+    
 
 # Obtener los favoritos de un usuario específico
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
@@ -141,6 +246,39 @@ def delete_favorite(user_id, favorite_id):
 
     return jsonify({"msg": "Favorite deleted successfully"}), 200
 
+# elimina algún people
+
+@app.route('/people/<int:id>', methods=['DELETE'])
+def delete_people():
+    try :
+        # solo quiero hacer una busqueda y mostrarlo
+        
+        people = db.session.execute(db.select(People) .filter_by (id=id)).scalar_one()
+        print(people)
+        db.session.delete(People)
+        db.session.commit()
+                # user = db.session.execute(db.select(Table) .filter_by (atributo de busqueda =request_body ["at de busqueda "])). scalar_one()
+
+        return jsonify({"msg": "deleted"}), 200
+    except:
+        return jsonify({"msg":"person exists"}), 404
+    
+    # elimina algún people
+
+@app.route('/planets/<int:id>', methods=['DELETE'])
+def delete_planet():
+    try :
+        # solo quiero hacer una busqueda y mostrarlo
+        
+        planet = db.session.execute(db.select(Planets) .filter_by (id=id)).scalar_one()
+        print(planet)
+        db.session.delete(Planets)
+        db.session.commit()
+                # user = db.session.execute(db.select(Table) .filter_by (atributo de busqueda =request_body ["at de busqueda "])). scalar_one()
+
+        return jsonify({"msg": "deleted"}), 200
+    except:
+        return jsonify({"msg":"planet exists"}), 404
 
 
 # this only runs if `$ python src/app.py` is executed
